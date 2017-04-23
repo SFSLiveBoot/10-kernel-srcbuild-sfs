@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+. "$(dirname "$0")/.common.sh"
+
+: ${nr_procs:=$(grep -c ^processor /proc/cpuinfo)}
+: ${nr_procs:=2}
+: ${compile_target:=bindeb-pkg}
+
+tm0=$(date +%s)
+make -j$nr_procs -C "$kernel_src" O="$build_dir" INSTALL_MOD_STRIP=1 $compile_target
+tm1=$(date +%s)
+
+echo "Compile time: $(($tm1-$tm0)) seconds"

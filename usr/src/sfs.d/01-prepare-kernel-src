@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+. "$(dirname "$0")/.common.sh"
+
+test ! -d "$kernel_src" || {
+    echo "Sources already present at $kernel_src, skipping this script (${0##*/})" >&2
+    exit 0
+}
+
+echo "Kernel version set to KVER=$KVER (set in environment to change)"
+
+: ${kver_maj:=${KVER%%.*}}
+: ${kernel_url:=https://cdn.kernel.org/pub/linux/kernel/v${kver_maj}.x/linux-${KVER}.tar.xz}
+: ${kernel_txz:=$(dl_file $kernel_url)}
+
+test -s "$kernel_txz" || {
+  echo "Could not download kernel version '$KVER' from $kernel_url" >&2
+  echo " Please set KVER environment variable for other version." >&2
+  exit 1
+}
+
+mkdir -p "$kernel_src"
+echo -n "Unpacking ${kernel_txz##*/} .. "
+tar xfJ "$kernel_txz" -C "$kernel_src" --strip-components=1
+echo "done."

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+. "$(dirname "$0")/.common.sh"
+
+make -C "$kernel_src" O="$build_dir" oldconfig
+
+grep -q "^CONFIG_AUFS_FS=m" "$build_dir/.config" || {
+  cat >>"$build_dir/.config" <<EOF
+CONFIG_AUFS_FS=m
+CONFIG_AUFS_BRANCH_MAX_127=y
+CONFIG_AUFS_SBILIST=y
+CONFIG_AUFS_HNOTIFY=y
+CONFIG_AUFS_HFSNOTIFY=y
+CONFIG_AUFS_EXPORT=y
+CONFIG_AUFS_INO_T_64=y
+CONFIG_AUFS_XATTR=y
+CONFIG_AUFS_RDU=y
+CONFIG_AUFS_BR_FUSE=y
+CONFIG_AUFS_POLL=y
+CONFIG_AUFS_BR_HFSPLUS=y
+CONFIG_AUFS_BDEV_LOOP=y
+EOF
+}
