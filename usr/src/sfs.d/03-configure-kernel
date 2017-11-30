@@ -7,7 +7,7 @@ test -z "$kernel_config_url" ||
   kernel_config="$(dl_file "$kernel_config_url")"
 
 test -s "$kernel_config" ||
-  cat "$kernel_config" >"$build_dir/.config"
+  install -D "$kernel_config" "$build_dir/.config"
 
 make -C "$kernel_src" O="$build_dir" oldconfig
 
