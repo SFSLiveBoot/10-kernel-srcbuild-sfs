@@ -11,7 +11,7 @@ test ! -e "$kernel_src/include/uapi/linux/aufs_type.h" || {
 : ${aufs_branch:=aufs$(echo $KVER | cut -f1-2 -d.)}
 : ${aufs_url:=https://github.com/sfjro/aufs4-standalone.git}
 : ${aufs_src=$(git_branch=$aufs_branch dl_file $aufs_url)}
-for patch in kbuild base mmap standalone loopback;do
+for patch in kbuild base mmap standalone;do
 ( cd "$kernel_src"; patch -p1 ) < "$aufs_src/aufs4-${patch}.patch"
 done
 
