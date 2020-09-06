@@ -11,7 +11,7 @@ test ! -s "$kernel_config" ||
 
 make -C "$kernel_src" O="$build_dir" oldconfig
 
-grep -q "^CONFIG_AUFS_FS=m" "$build_dir/.config" || {
+test -n "$NO_AUFS" || grep -q "^CONFIG_AUFS_FS=m" "$build_dir/.config" || {
   cat >>"$build_dir/.config" <<EOF
 CONFIG_AUFS_FS=m
 CONFIG_AUFS_BRANCH_MAX_127=y

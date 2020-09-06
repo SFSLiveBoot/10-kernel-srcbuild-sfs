@@ -3,6 +3,8 @@
 set -e
 . "$(dirname "$0")/.common.sh"
 
+test -z "$NO_AUFS" || { echo "NO_AUFS set, not adding aufs" >&2 ; exit 0; }
+
 test ! -e "$kernel_src/include/uapi/linux/aufs_type.h" || {
   echo "AUFS already included, skipping this script (${0##*/})" >&2
   exit 0
@@ -12,6 +14,12 @@ test ! -e "$kernel_src/include/uapi/linux/aufs_type.h" || {
 : ${aufs_branch:=aufs$(echo $KVER | cut -f1-2 -d.)}
 : ${aufs_url:=https://github.com/sfjro/aufs${kmaj}-standalone.git}
 : ${aufs_src=$(git_branch=$aufs_branch dl_file $aufs_url)}
+
+test -d "$aufs_src" || {
+  echo "Could not download aufs. Use NO_AUFS=1 to explicitly disable Aufs." >&2
+  exit 1
+}
+
 for patch in kbuild base mmap standalone;do
 ( cd "$kernel_src"; patch -p1 ) < "$aufs_src/aufs${kmaj}-${patch}.patch"
 done
