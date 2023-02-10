@@ -11,9 +11,9 @@ test ! -e "$kernel_src/include/uapi/linux/aufs_type.h" || {
 }
 
 : "${kmaj:=$(echo "$KVER" | cut -f1 -d.)}"
-: ${aufs_branch:=aufs$(echo $KVER | cut -f1-2 -d.)}
-: ${aufs_url:=https://github.com/sfjro/aufs${kmaj}-standalone.git}
-: ${aufs_src=$(git_branch=$aufs_branch dl_file $aufs_url)}
+: "${aufs_branch:=aufs$(echo "$KVER" | cut -f1-2 -d.)}"
+: "${aufs_url:=https://github.com/sfjro/aufs-standalone.git}"
+: "${aufs_src=$(git_branch=$aufs_branch dl_file "$aufs_url")}"
 
 test -d "$aufs_src" || {
   echo "Could not download aufs. Use NO_AUFS=1 to explicitly disable Aufs." >&2
