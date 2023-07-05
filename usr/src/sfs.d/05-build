@@ -3,10 +3,17 @@
 set -e
 . "$(dirname "$0")/.common.sh"
 
-: ${built_kver:=$(make -s -C "$kernel_src" O="$build_dir" kernelrelease)}
-: ${deb_ver:=$(cat "$build_dir/.version")}
+: "${built_kver:=$(make -s -C "$kernel_src" O="$build_dir" kernelrelease)}"
+: "${deb_ver:=$(cat "$build_dir/.version")}"
 
 find "$build_dir/../" -mindepth 1 -maxdepth 1 -name "linux-*_${built_kver}-${deb_ver}_*.deb" -not -name "linux-libc-dev_*" \
   -exec env DESTDIR="$DESTDIR" sh -c 'for deb;do dpkg-deb -x "$deb" "$DESTDIR";done' _.sh {} +
 
 depmod -b "$DESTDIR" "$built_kver"
+
+test -n "${USRMERGE+set}" || USRMERGE="$(test ! -L /lib -o -L "$DESTDIR/lib" || echo 1)"
+test -z "$USRMERGE" || {
+  mkdir -p "$DESTDIR/usr/lib"
+  mv "$DESTDIR/lib"/* "$DESTDIR/usr/lib/"
+  rmdir "$DESTDIR/lib"
+}
