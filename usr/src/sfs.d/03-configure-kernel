@@ -28,3 +28,7 @@ CONFIG_AUFS_BR_HFSPLUS=y
 CONFIG_AUFS_BDEV_LOOP=y
 EOF
 }
+
+mkdir -p "$build_dir/fs/aufs"
+d="$build_dir" find "$kernel_src/fs/aufs" -name '*.mk' \
+  -exec sh -c 'for mk;do test -e "$d/fs/aufs/${mk##*/}" || ln -s "$mk" "$d/fs/aufs/";done' _ {} +
