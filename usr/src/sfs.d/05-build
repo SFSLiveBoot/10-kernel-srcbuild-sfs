@@ -7,7 +7,7 @@ set -e
 : "${deb_ver:=$(cat "$build_dir/.version")}"
 
 find "$build_dir/../" -mindepth 1 -maxdepth 1 -name "linux-*_${built_kver}-${deb_ver}_*.deb" -not -name "linux-libc-dev_*" \
-  -exec env DESTDIR="$DESTDIR" sh -c 'for deb;do dpkg-deb -x "$deb" "$DESTDIR";done' _.sh {} +
+  -exec env DESTDIR="$DESTDIR" sh -c 'for deb;do case "$deb" in *-dbg_*) ;; *) dpkg-deb -x "$deb" "$DESTDIR";;esac;done' _.sh {} +
 
 depmod -b "$DESTDIR" "$built_kver"
 
